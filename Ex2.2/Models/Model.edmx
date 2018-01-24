@@ -45,6 +45,14 @@
           <EntitySet Name="Customers" EntityType="Model.Customer" />
           <EntitySet Name="Orders" EntityType="Model.Order" />
           <EntitySet Name="Products" EntityType="Model.Product" />
+          <AssociationSet Name="CustomerOrder" Association="Model.CustomerOrder">
+            <End Role="Customer" EntitySet="Customers" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
+          <AssociationSet Name="ProductOrder" Association="Model.ProductOrder">
+            <End Role="Product" EntitySet="Products" />
+            <End Role="Order" EntitySet="Orders" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Customer">
           <Key>
@@ -54,6 +62,7 @@
           <Property Name="FirstName" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
           <Property Name="LastName" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
           <Property Name="Email" Type="String" MaxLength="25" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Orders" Relationship="Model.CustomerOrder" FromRole="Customer" ToRole="Order" />
         </EntityType>
         <EntityType Name="Order">
           <Key>
@@ -63,6 +72,10 @@
           <Property Name="CustomerID" Type="Int32" />
           <Property Name="ProductID" Type="Int32" />
           <Property Name="OrderQuality" Type="Int32" />
+          <NavigationProperty Name="Customer" Relationship="Model.CustomerOrder" FromRole="Order" ToRole="Customer" />
+          <Property Name="CustomerId1" Type="Int32" Nullable="true" />
+          <NavigationProperty Name="Product" Relationship="Model.ProductOrder" FromRole="Order" ToRole="Product" />
+          <Property Name="ProductId1" Type="Int32" Nullable="true" />
         </EntityType>
         <EntityType Name="Product">
           <Key>
@@ -72,7 +85,32 @@
           <Property Name="Name" Type="String" Nullable="false" MaxLength="10" FixedLength="true" Unicode="true" />
           <Property Name="Cost" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
           <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Orders" Relationship="Model.ProductOrder" FromRole="Product" ToRole="Order" />
         </EntityType>
+        <Association Name="CustomerOrder">
+          <End Type="Model.Customer" Role="Customer" Multiplicity="0..1" />
+          <End Type="Model.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Customer">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="CustomerId1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="ProductOrder">
+          <End Type="Model.Product" Role="Product" Multiplicity="0..1" />
+          <End Type="Model.Order" Role="Order" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order">
+              <PropertyRef Name="ProductId1" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
